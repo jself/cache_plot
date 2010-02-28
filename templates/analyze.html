@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <title>Cache Analysix</title>
+        <style type="text/css">
+            th {
+                padding:2px;
+            }
+            td {
+                padding:2px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Cache Analysis</h1>
+        <h3>Overall Hit Percentage: {{overall}}</h3>
+        <h3>Worst Pages:</h3>
+        <table border=1>
+            <tr>
+                <th>#</th>
+                <th>Path</th>
+                <th>Hits</th>
+                <th>Misses</th>
+                <th>Hit Ratio</th>
+                <th>Times Visited</th>
+            </tr>
+        {% for page in worst %} 
+            <tr><td>{{forloop.counter}}</td>
+                <td>{{page.path}}</td>
+                <td>{{page.hits}}</td>
+                <td>{{page.misses}}</td>
+                <td>{% if page.hits or page.misses %}
+                    {{page.hit_ratio|floatformat}}%
+                    {% else %}N/A
+                    {% endif %}</td>
+                <td>{{page.called}}</td>
+            </tr>
+        {%endfor%}
+        </table>
+        <h3>Best Pages:</h3>
+        <table border=1>
+            <tr>
+                <th>#</th>
+                <th>Path</th>
+                <th>Hits</th>
+                <th>Misses</th>
+                <th>Hit Ratio</th>
+                <th>Times Visited</th>
+            </tr>
+        {% for page in best %} 
+            <tr><td>{{forloop.counter}}</td>
+                <td>{{page.path}}</td>
+                <td>{{page.hits}}</td>
+                <td>{{page.misses}}</td>
+                <td>{% if page.hits or page.misses %}
+                    {{page.hit_ratio|floatformat}}%
+                    {% else %}N/A
+                    {% endif %}</td>
+                <td>{{page.called}}</td>
+            </tr>
+        {%endfor%}
+        </table>
+        <h3>Tables:</h3>
+        <table border=1>
+            <tr>
+                <th>Table</th>
+                <th>Hits</th>
+                <th>Misses</th>
+                <th>Hit Ratio</th>
+                <th>Total Queries</th>
+            </tr>
+            {% for table in tables %} 
+            <tr>
+                <td>{{table.table}}</td>
+                <td>{{table.hits}}</td>
+                <td>{{table.misses}}</td>
+                <td>{% if table.hits or table.misses %}
+                    {{table.hit_ratio|floatformat}}%
+                    {% else %}N/A
+                    {% endif %}</td>
+                <td>{{table.count}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+    <body>
+</html>
+        
+
+
