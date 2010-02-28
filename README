@@ -1,3 +1,3 @@
-cache_plot is a basic frontend for johnny cache (http://packages.python.org/johnny-cache/)
+cache_plot is a basic frontend for johnny cache  -- http://packages.python.org/johnny-cache/
 It uses mongodb to cache every cache hit or miss in mongodb then map/reduce to perform the 
 analysis.
