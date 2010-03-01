@@ -9,22 +9,31 @@ class CachePlotMiddleware(object):
         signals.qc_hit.connect(self._hit)
         signals.qc_miss.connect(self._miss)
 
-        self.tables, self.requests = backend.get_buckets()
+        try:
+            self.tables, self.requests = backend.get_buckets()
+        except:
+            pass
 
     def _hit(self, sender, **kwargs):
         tables = kwargs['tables']
         for table in tables:
-            self.tables.insert({'result':'hit',
-                                'table':table,
-                                'time':time.time()})
+            try:
+                self.tables.insert({'result':'hit',
+                                    'table':table,
+                                    'time':time.time()})
+            except:
+                pass
         self.log_row['hits'] += 1
             
     def _miss(self, sender, **kwargs):
         tables = kwargs['tables']
         for table in tables:
-            self.tables.insert({'result':'miss',
-                                'table':table,
-                                'time':time.time()})
+            try:
+                self.tables.insert({'result':'miss',
+                                    'table':table,
+                                    'time':time.time()})
+            except:
+                pass
         self.log_row['misses'] += 1
 
 
@@ -38,8 +47,14 @@ class CachePlotMiddleware(object):
 
 
     def process_response(self, request, response):
-        self.requests.insert(self.log_row)
+        try:
+            self.requests.insert(self.log_row)
+        except:
+            pass
         return response
 
     def process_exception(self, request, exception):
-        self.requests.insert(self.log_row)
+        try:
+            self.requests.insert(self.log_row)
+        except:
+            pass
