@@ -18,22 +18,26 @@ class CachePlotMiddleware(object):
         tables = kwargs['tables']
         for table in tables:
             try:
-                self.tables.insert({'result':'hit',
-                                    'table':table,
-                                    'time':time.time()})
-            except:
-                pass
+                self.tables.update({"table":table}, 
+                                   {"$inc":{"hits":1}}, True)
+                #self.tables.insert({'result':'hit',
+                #                    'table':table,
+                #                    'time':time.time()})
+
+            except Exception, e:
+                print "Error when logging row to tables: " %str(e)
         self.log_row['hits'] += 1
             
     def _miss(self, sender, **kwargs):
         tables = kwargs['tables']
         for table in tables:
             try:
-                self.tables.insert({'result':'miss',
-                                    'table':table,
-                                    'time':time.time()})
-            except:
-                pass
+                self.tables.update({"table":table}, {"$inc":{"misses":1}}, True)
+                #self.tables.insert({'result':'miss',
+                #                    'table':table,
+                #                    'time':time.time()})
+            except Exception, e:
+                print "Error when logging row to tables: " %str(e)
         self.log_row['misses'] += 1
 
 
@@ -46,15 +50,16 @@ class CachePlotMiddleware(object):
         self.log_row['misses'] = 0
 
 
-    def process_response(self, request, response):
+    def log(self):
         try:
-            self.requests.insert(self.log_row)
-        except:
-            pass
+            self.requests.update({"path":self.log_row['path']},
+                                 {"$inc":{"hits":self.log_row['hits'], "misses":self.log_row['misses'], 'visits':1}},
+                                 True)
+        except Exception, e:
+            print "Error when logging row to requests: " %str(e)
+    def process_response(self, request, response):
+        self.log()
         return response
 
     def process_exception(self, request, exception):
-        try:
-            self.requests.insert(self.log_row)
-        except:
-            pass
+        self.log()

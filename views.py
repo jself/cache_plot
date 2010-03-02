@@ -17,43 +17,23 @@ def hit_ratio(hits, misses):
     return "N/A"
 
 def get_overall(tables):
-    hits = tables.find({"result": "hit"}).count()
-    misses = tables.find({"result":"miss"}).count()
-    return hit_ratio(hits, misses)
-
-def get_results(requests):
-    filter = Code("""function (obj) {
-        if (obj.hits > 0 or obj.misses > 0) {
-            return true;
-        }   return false;
-    }""")
-        
-    reduce = Code("""function (obj, prev) {
-        prev.hits += obj.hits;
-        prev.misses += obj.misses;
-        prev.called += 1;
-    }""")
-    return requests.group(['path'], filter, {'called':0, 'hits':0, 'misses':0}, reduce)
-
-def table_results(tables):
-    reduce = Code("""function (obj, prev) {
-        if (obj.result == "hit") {
-            prev.hits += 1
-        }   else {
-            prev.misses += 1
-        }
-            prev.count += 1;
-        }""")
-    return tables.group(['table'], None, {'hits':0, 'misses':0, 'count':0}, reduce)
+    total_hits = 0
+    total_misses = 0
+    for table in tables.find():
+        total_hits += table.get('hits', 0)
+        total_misses += table.get('misses', 0)
+    return hit_ratio(total_hits, total_misses)
 
 
 def analyze(request):
-    tables, request = backend.get_buckets()
+    tables, requests = backend.get_buckets()
 
     overall = get_overall(tables)
 
-    requests = get_results(request)
+    requests = list(requests.find())
     for i in requests:
+        i['hits'] = i.get('hits', 0)
+        i['misses'] = i.get('misses', 0)
         i['hit_ratio'] = hit_ratio(i['hits'], i['misses'])
         i['path'] = i['path'][0:100]
 
@@ -78,10 +58,15 @@ def analyze(request):
     requests.sort(sort_worst)
     worst = list(requests[0:10])
 
-    tables = table_results(tables)
+    tables = list(tables.find())
+
     tables.sort(table_sorter)
     for table in tables:
+        table['hits'] = table.get('hits', 0)
+        table['misses'] = table.get('misses', 0)
         table['hit_ratio'] = hit_ratio(table['hits'], table['misses'])
+        table['count'] = table['hits'] + table['misses']
+    
 
     return render_to_response('analyze.html', dict(worst=worst, best=best, overall=overall, tables=tables))
 
