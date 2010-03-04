@@ -68,17 +68,17 @@
             <div class="header">
                 <span class="menu-item">
                     {% block stats_header %}
-                    <a href="stats/">Stats</a>
+                    <a href="{% url cache_plot.views.stats %}">Stats</a>
                     {% endblock%}
                 </span>| 
                 <span class="menu-item">
                     {% block pages_header %}
-                    <a href="pages/">Pages</a>
+                    <a href="{% url cache_plot.views.pages %}">Pages</a>
                     {% endblock %}
                 </span>|
                 <span class="menu-item">
                     {% block tables_header %}
-                    <a href="tables/">Tables</a>
+                    <a href="{% url cache_plot.views.tables %}">Tables</a>
                     {% endblock %}
                 </span>
             </div>
