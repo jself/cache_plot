@@ -1,3 +1,30 @@
 cache_plot is a basic frontend for johnny cache  -- http://packages.python.org/johnny-cache/
-It uses mongodb to cache every cache hit or miss in mongodb then map/reduce to perform the 
-analysis.
+It currently uses mongo_db to log a counter per table and per page path for hits/misses.
+
+To install:
+Add urls.py to your main urls.py:
+
+    (r'^plot/', include('cache_plot.urls')),
+
+Add (appname).cache_plot.middleware.CachePlotMiddleware to your MIDDLEWARE_CLASSES
+
+Install mongo_db (http://www.mongodb.org) and run 
+
+Optional settings:
+CACHE_PLOT_HOST: string host mongo is running on. default='localhost'
+CACHE_PLOT_PORT: port mongo is running on. default=27017
+CACHE_PLOT_DB: database to connect to. default='cache_plot'
+CACHE_PLOT_TABLE_BUCKET: tables bucket. default='tables_aggr'
+CACHE_PLOT_REQUEST_BUCKET: tables bucket. default='request_aggr'
+
+In the future I would like to change the default resolution back to days, 
+and perhaps make an aggregator if there are too many entries. 
+
+I would also like to default the pages and to a searchable/sortable
+lazy loading ajax table, though that diminishes some of the 
+simplicity of the current app, so the direction is undecided.
+
+This has not been tested in a production environment on a high
+load host. The current aggregated version will log every request
+path including GET parameters, so the log size could be
+ large.

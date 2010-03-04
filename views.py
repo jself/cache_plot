@@ -25,10 +25,8 @@ def get_overall(tables):
     return hit_ratio(total_hits, total_misses)
 
 
-def analyze(request):
+def pages(request):
     tables, requests = backend.get_buckets()
-
-    overall = get_overall(tables)
 
     requests = list(requests.find())
     for i in requests:
@@ -50,15 +48,20 @@ def analyze(request):
             return -1
         return cmp(b['hit_ratio'], a['hit_ratio'])
 
-    def table_sorter(a, b):
-        return cmp(a['table'], b['table'])
 
     requests.sort(sort_best)
     best = list(requests[0:10])
     requests.sort(sort_worst)
     worst = list(requests[0:10])
 
+    return render_to_response('pages.html', dict(worst=worst, best=best ))
+
+def tables(request):
+    tables, requests = backend.get_buckets()
     tables = list(tables.find())
+
+    def table_sorter(a, b):
+        return cmp(a['table'], b['table'])
 
     tables.sort(table_sorter)
     for table in tables:
@@ -66,7 +69,12 @@ def analyze(request):
         table['misses'] = table.get('misses', 0)
         table['hit_ratio'] = hit_ratio(table['hits'], table['misses'])
         table['count'] = table['hits'] + table['misses']
-    
 
-    return render_to_response('analyze.html', dict(worst=worst, best=best, overall=overall, tables=tables))
+    return render_to_response('tables.html', dict(tables=tables))
 
+def stats(request):
+    tables, requests = backend.get_buckets()
+    overall = get_overall(tables)
+    page_views = requests.find().count()
+    queries=tables.find().count()
+    return render_to_response('stats.html', dict(page_views=page_views, queries=queries, overall=overall))

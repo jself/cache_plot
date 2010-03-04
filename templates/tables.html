@@ -1,0 +1,30 @@
+{% extends "main.html" %}
+{% block tables_header %}
+    Tables
+{% endblock %}
+
+{% block content %}
+    <table border=1>
+        <tr>
+            <th>Table</th>
+            <th>Hits</th>
+            <th>Misses</th>
+            <th>Hit Ratio</th>
+            <th>Total Queries</th>
+        </tr>
+        {% for table in tables %}
+        <tr>
+            <td>{{table.table}}
+            <td>{{table.hits}}</td>
+            <td>{{table.misses}}</td>
+            <td>{% if table.hits or table.misses %}
+                {{table.hit_ratio|floatformat}}%
+                {% else %}N/A
+                {% endif %}</td>
+            <td>{{table.count}}</td>
+        </tr>
+        {%endfor%}
+      </table>
+            
+
+{% endblock %}

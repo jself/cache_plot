@@ -3,6 +3,12 @@ from johnny import signals
 import uuid
 import time
 import backend
+import datetime
+
+def get_unix_date():
+    #no reason to use int here other than that it's just as easy as storing a datetime...
+    #dates are not accepted in couch db
+    return int(datetime.datetime.now().date().strftime('%s'))
 
 class CachePlotMiddleware(object):
     def __init__(self):
@@ -20,9 +26,6 @@ class CachePlotMiddleware(object):
             try:
                 self.tables.update({"table":table}, 
                                    {"$inc":{"hits":1}}, True)
-                #self.tables.insert({'result':'hit',
-                #                    'table':table,
-                #                    'time':time.time()})
 
             except Exception, e:
                 print "Error when logging row to tables: " %str(e)

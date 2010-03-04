@@ -1,0 +1,54 @@
+{% extends "main.html" %}
+{% block pages_header %}
+    Pages
+{% endblock %}
+
+{% block content %}
+    <h3>Worst Pages:</h3>
+    <table border=1>
+        <tr>
+            <th>#</th>
+            <th>Path</th>
+            <th>Hits</th>
+            <th>Misses</th>
+            <th>Hit Ratio</th>
+            <th>Times Visited</th>
+        </tr>
+        {% for page in worst %}
+        <tr><td>{{forloop.counter}}</td>
+            <td>{{page.path}}</td>
+            <td>{{page.hits}}</td>
+            <td>{{page.misses}}</td>
+            <td>{% if page.hits or page.misses %}
+                {{page.hit_ratio|floatformat}}%
+                {% else %}N/A
+                {% endif %}</td>
+            <td>{{page.visits}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+    <h3>Best Pages:</h3>
+    <table border=1>
+        <tr>
+            <th>#</th>
+            <th>Path</th>
+            <th>Hits</th>
+            <th>Misses</th>
+            <th>Hit Ratio</th>
+            <th>Times Visited</th>
+        </tr>
+        {% for page in best %}
+        <tr><td>{{forloop.counter}}</td>
+            <td>{{page.path}}</td>
+            <td>{{page.hits}}</td>
+            <td>{{page.misses}}</td>
+            <td>{% if page.hits or page.misses %}
+                {{page.hit_ratio|floatformat}}%
+                {% else %}N/A
+                {% endif %}</td>
+            <td>{{page.visits}}</td>
+        </tr>
+        {%endfor%}
+    </table>
+
+{% endblock %}

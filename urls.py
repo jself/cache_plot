@@ -6,7 +6,10 @@ urlpatterns = patterns('cache_plot.views',
     # (r'^finderweb/', include('finderweb.foo.urls')),
 
     # Uncomment this for admin:
-    (r'^$', 'analyze'),
+    (r'^$', 'pages'),
+    (r'pages/$', 'pages'),
+    (r'tables/$', 'tables'),
+    (r'stats/$', 'stats'),
 
 )
 
